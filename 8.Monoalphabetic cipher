@@ -1,42 +1,68 @@
 #include <stdio.h>
-#include <math.h>
-#include <ctype.h>
 #include <string.h>
-int main()
-{
-	int k,i;
-	char s[100],c[100];
-	printf("enter the plain text: ");
-	scanf("%s",&s);
-	printf("\nenter the key value: ");
-	scanf("%d",&k);
-	printf("\nencryption: ");
-	for(i=0;i<strlen(s);i++)
-	{
-		if(islower(s[i]))
-		{
-			c[i]=((s[i]-'a'+k)%26)+'a';
-				printf("%c",c[i]);
-		}
-		else
-		{
-			c[i]=((s[i]-'A'+k)%26)+'A';
-				printf("%c",c[i]);
-			}	
-				}
-		printf("\ndecryption: ");
-	for(i=0;i<strlen(s);i++)
-	{
-		if(islower(c[i]))
-		{
-			s[i]=((c[i]-'a'-k)+26)%26+'a';
-			printf("%c",s[i]);
-		}
-		else
-		{
-			s[i]=((c[i]-'A'-k)+26)%26+'A';
-			printf("%c",s[i]);
-		}
-	}
-	return 0;
+#include <ctype.h>
+
+#define ALPHABET_SIZE 26
+
+// Function to generate the cipher key based on the keyword
+void generateCipherKey(char *keyword, char *cipherKey) {
+    int i, j;
+    int keywordLength = strlen(keyword);
+    int used[ALPHABET_SIZE] = {0}; // Array to keep track of used letters
+
+    // Copy the keyword to the cipher key
+    strcpy(cipherKey, keyword);
+
+    // Mark characters in the keyword as used
+    for (i = 0; i < keywordLength; i++) {
+        if (isalpha(keyword[i])) {
+            used[toupper(keyword[i]) - 'A'] = 1;
+        }
+    }
+
+    // Fill the remaining unused letters in the cipher key
+    j = keywordLength;
+    for (i = 0; i < ALPHABET_SIZE; i++) {
+        if (!used[i]) {
+            cipherKey[j++] = 'A' + i;
+        }
+    }
+    cipherKey[j] = '\0'; // Null-terminate the cipher key
+}
+
+// Function to perform encryption
+void encrypt(char *plaintext, char *cipherKey, char *ciphertext) {
+    int i;
+    int length = strlen(plaintext);
+
+    for (i = 0; i < length; i++) {
+        if (isalpha(plaintext[i])) {
+            if (islower(plaintext[i])) {
+                ciphertext[i] = tolower(cipherKey[plaintext[i] - 'a']);
+            } else {
+                ciphertext[i] = toupper(cipherKey[plaintext[i] - 'A']);
+            }
+        } else {
+            ciphertext[i] = plaintext[i]; // Keep non-alphabetic characters unchanged
+        }
+    }
+    ciphertext[length] = '\0'; // Null-terminate the ciphertext
+}
+
+int main() {
+    char keyword[] = "CIPHER";
+    char plaintext[] = "abcdefghijklmnopqrstuvwxyz";
+    char cipherKey[ALPHABET_SIZE + 1]; // Extra space for null terminator
+    char ciphertext[strlen(plaintext) + 1]; // Extra space for null terminator
+
+    // Generate the cipher key
+    generateCipherKey(keyword, cipherKey);
+
+    // Encrypt the plaintext
+    encrypt(plaintext, cipherKey, ciphertext);
+
+    printf("Plaintext: %s\n", plaintext);
+    printf("Ciphertext: %s\n", ciphertext);
+
+    return 0;
 }
