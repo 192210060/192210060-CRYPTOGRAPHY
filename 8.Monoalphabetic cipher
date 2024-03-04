@@ -1,40 +1,28 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-
 #define ALPHABET_SIZE 26
-
-// Function to generate the cipher key based on the keyword
 void generateCipherKey(char *keyword, char *cipherKey) {
     int i, j;
     int keywordLength = strlen(keyword);
-    int used[ALPHABET_SIZE] = {0}; // Array to keep track of used letters
-
-    // Copy the keyword to the cipher key
+    int used[ALPHABET_SIZE] = {0};
     strcpy(cipherKey, keyword);
-
-    // Mark characters in the keyword as used
     for (i = 0; i < keywordLength; i++) {
         if (isalpha(keyword[i])) {
             used[toupper(keyword[i]) - 'A'] = 1;
         }
     }
-
-    // Fill the remaining unused letters in the cipher key
     j = keywordLength;
     for (i = 0; i < ALPHABET_SIZE; i++) {
         if (!used[i]) {
             cipherKey[j++] = 'A' + i;
         }
     }
-    cipherKey[j] = '\0'; // Null-terminate the cipher key
+    cipherKey[j] = '\0';
 }
-
-// Function to perform encryption
 void encrypt(char *plaintext, char *cipherKey, char *ciphertext) {
     int i;
     int length = strlen(plaintext);
-
     for (i = 0; i < length; i++) {
         if (isalpha(plaintext[i])) {
             if (islower(plaintext[i])) {
@@ -43,26 +31,19 @@ void encrypt(char *plaintext, char *cipherKey, char *ciphertext) {
                 ciphertext[i] = toupper(cipherKey[plaintext[i] - 'A']);
             }
         } else {
-            ciphertext[i] = plaintext[i]; // Keep non-alphabetic characters unchanged
+            ciphertext[i] = plaintext[i];
         }
     }
-    ciphertext[length] = '\0'; // Null-terminate the ciphertext
+    ciphertext[length] = '\0';
 }
-
 int main() {
     char keyword[] = "CIPHER";
     char plaintext[] = "abcdefghijklmnopqrstuvwxyz";
-    char cipherKey[ALPHABET_SIZE + 1]; // Extra space for null terminator
-    char ciphertext[strlen(plaintext) + 1]; // Extra space for null terminator
-
-    // Generate the cipher key
+    char cipherKey[ALPHABET_SIZE + 1];
+    char ciphertext[strlen(plaintext) + 1];
     generateCipherKey(keyword, cipherKey);
-
-    // Encrypt the plaintext
     encrypt(plaintext, cipherKey, ciphertext);
-
     printf("Plaintext: %s\n", plaintext);
     printf("Ciphertext: %s\n", ciphertext);
-
     return 0;
 }
