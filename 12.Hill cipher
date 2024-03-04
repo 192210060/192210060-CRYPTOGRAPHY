@@ -29,7 +29,6 @@ void encryption()
    		printf("%c ",(en[i][0]%26)+65);
 	}
 }
-
 int main()
 {
 	getkeymatrix();
